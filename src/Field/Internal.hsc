@@ -12,7 +12,8 @@ module Field.Internal (
 	Position, Dimension, Pixel,
 	Field.Internal.drawLine, fillRect, drawImage,
 	drawStr, Field.Internal.textExtents, textXOff, clearField, flushField,
-	TextUtf8(..)
+	TextUtf8(..),
+	Button
 	) where
 
 import Foreign.Ptr

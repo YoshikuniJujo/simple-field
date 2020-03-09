@@ -9,7 +9,8 @@ module Field (
 	Event(..), withNextEvent, withNextEventTimeout, withNextEventTimeout',
 	Position, Dimension, Pixel, drawLine, fillRect, drawImage,
 	drawStr, textExtents, textXOff, clearField, flushField,
-	TextUtf8
+	TextUtf8,
+	Button
 	) where
 
 import Field.Internal
