@@ -7,7 +7,7 @@ module Field (
 		buttonPressMask, buttonReleaseMask,
 		pointerMotionMask, button1MotionMask,
 	Event(..), withNextEvent, withNextEventTimeout, withNextEventTimeout',
-	Position, Dimension, Pixel, drawLine, fillRect, drawImage,
+	Position, Dimension, Pixel, drawLine, drawLines, Point(..), fillRect, drawImage,
 	drawStr, textExtents, textXOff, clearField, flushField,
 	TextUtf8,
 	Button

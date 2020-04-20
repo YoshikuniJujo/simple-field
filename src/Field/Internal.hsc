@@ -13,7 +13,8 @@ module Field.Internal (
 	Field.Internal.drawLine, fillRect, drawImage,
 	drawStr, Field.Internal.textExtents, textXOff, clearField, flushField,
 	TextUtf8(..),
-	Button
+	Button,
+	Field.Internal.drawLines, Point(..)
 	) where
 
 import Foreign.Ptr
@@ -130,6 +131,11 @@ allEvent d = do
 	n <- pending d
 	if n == 0 then pure [] else do
 		(++) <$> fromIntegral n `replicateM` getNextEvent d <*> allEvent d
+
+drawLines :: Field -> Pixel -> CInt -> [Point] -> IO ()
+drawLines Field { display = dpy, pixmap = win, graphicsContext = gc } c lw ps = do
+	setLineAttributes dpy gc lw lineSolid capRound joinRound
+	setForeground dpy gc c >> X.drawLines dpy win gc ps coordModeOrigin
 
 fillRect :: Field ->
 	Pixel -> Position -> Position -> Dimension -> Dimension -> IO ()
