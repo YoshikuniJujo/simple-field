@@ -50,8 +50,8 @@ data Field = Field {
 	pendingEvents :: IORef [Event],
 	isDeleteEvent :: Event -> Bool }
 
-keycodeToKeysym :: Field -> KeyCode -> IO KeySym
-keycodeToKeysym f kc = X.keycodeToKeysym (display f) kc 0
+keycodeToKeysym :: Field -> KeyCode -> CInt -> IO KeySym
+keycodeToKeysym = X.keycodeToKeysym . display
 
 openField :: TextUtf8 t => t -> [Mask] -> IO Field
 openField nm ms = do
