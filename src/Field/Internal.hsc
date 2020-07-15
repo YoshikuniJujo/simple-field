@@ -14,7 +14,8 @@ module Field.Internal (
 	drawStr, Field.Internal.textExtents, textXOff, clearField, flushField,
 	TextUtf8(..),
 	Button,
-	Field.Internal.drawLines, Point(..)
+	Field.Internal.drawLines, Point(..),
+	keycodeToKeysym
 	) where
 
 import Foreign.Ptr
@@ -28,7 +29,8 @@ import Data.Time
 import Data.IORef
 import System.Posix.Types
 import Numeric
-import Graphics.X11 as X
+import Graphics.X11 hiding (keycodeToKeysym)
+import qualified Graphics.X11 as X
 import Graphics.X11.Xlib.Extras
 import Graphics.X11.Xft
 import Graphics.X11.Xrender
@@ -47,6 +49,9 @@ data Field = Field {
 	graphicsContext :: GC,
 	pendingEvents :: IORef [Event],
 	isDeleteEvent :: Event -> Bool }
+
+keycodeToKeysym :: Field -> KeyCode -> IO KeySym
+keycodeToKeysym f kc = X.keycodeToKeysym (display f) kc 0
 
 openField :: TextUtf8 t => t -> [Mask] -> IO Field
 openField nm ms = do

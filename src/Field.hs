@@ -10,7 +10,8 @@ module Field (
 	Position, Dimension, Pixel, drawLine, drawLines, Point(..), fillRect, drawImage,
 	drawStr, textExtents, textXOff, clearField, flushField,
 	TextUtf8,
-	Button
+	Button,
+	keycodeToKeysym
 	) where
 
 import Field.Internal
