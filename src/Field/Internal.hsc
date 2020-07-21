@@ -99,7 +99,7 @@ type Event' = (Event, Maybe KeySym)
 
 mkEvent' :: Field -> Event -> IO Event'
 mkEvent' f ev = (ev ,) <$> case ev of
-	ev@KeyEvent {} -> Just <$> keycodeToKeysym f (ev_keycode ev) 1
+	ev@KeyEvent {} -> Just <$> keycodeToKeysym f (ev_keycode ev) (fromIntegral $ ev_state ev .&. shiftMask)
 	_ -> pure Nothing
 
 withNextEvent :: MonadBaseControl IO m => Field -> (Event' -> m a) -> m a
