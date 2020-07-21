@@ -9,7 +9,7 @@ module Field.Internal (
 	Mask, exposureMask, keyPressMask,
 		buttonPressMask, buttonReleaseMask,
 		pointerMotionMask, button1MotionMask,
-	Event(..), withNextEvent, withNextEventTimeout, withNextEventTimeout',
+	Event', Event(..), withNextEvent, withNextEventTimeout, withNextEventTimeout',
 	Position, Dimension, Pixel,
 	Field.Internal.drawLine, fillRect, drawImage,
 	drawStr, Field.Internal.textExtents, textXOff, clearField, flushField,
