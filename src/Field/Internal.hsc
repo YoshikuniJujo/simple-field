@@ -1,4 +1,5 @@
-{-# LANGUAGE BlockArguments, LambdaCase, FlexibleContexts #-}
+{-# LANGUAGE BlockArguments, LambdaCase, TupleSections #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -Wall -fno-warn-tabs #-}
 
 #include <X11/Xlib.h>
@@ -94,9 +95,16 @@ closeField Field { display = d } = do
 	setCloseDownMode d #const AllTemporary
 	closeDisplay d
 
-withNextEvent :: MonadBaseControl IO m => Field -> (Event -> m a) -> m a
-withNextEvent Field { display = d } act =
-	liftBaseWith (\run -> allocaXEvent $ \e -> run . act =<< nextEvent d e *> getEvent e) >>= restoreM
+type Event' = (Event, Maybe KeySym)
+
+mkEvent' :: Field -> Event -> IO Event'
+mkEvent' f ev = (ev ,) <$> case ev of
+	ev@KeyEvent {} -> Just <$> keycodeToKeysym f (ev_keycode ev) 1
+	_ -> pure Nothing
+
+withNextEvent :: MonadBaseControl IO m => Field -> (Event' -> m a) -> m a
+withNextEvent f@Field { display = d } act =
+	liftBaseWith (\run -> allocaXEvent $ \e -> run . act =<< mkEvent' f =<< nextEvent d e *> getEvent e) >>= restoreM
 
 withNextEventTimeout :: MonadBaseControl IO m => Field -> Word32 -> ([Event] -> m a) -> m a
 withNextEventTimeout Field { display = d } n act =
@@ -109,9 +117,9 @@ withNextEventTimeout Field { display = d } n act =
 				(if to then pure [] else allEvent d)
 			_ -> pure es) >>= restoreM
 
-withNextEventTimeout' :: MonadBaseControl IO m => Field -> Word32 -> (Maybe Event -> m a) -> m a
-withNextEventTimeout' Field { display = d, pendingEvents = pes } n act =
-	liftBaseWith (\run -> run . act =<< do
+withNextEventTimeout' :: MonadBaseControl IO m => Field -> Word32 -> (Maybe Event' -> m a) -> m a
+withNextEventTimeout' f@Field { display = d, pendingEvents = pes } n act =
+	liftBaseWith (\run -> run . act =<< maybe (pure Nothing) ((Just <$>) . mkEvent' f) =<< do
 		readIORef pes >>= \case
 			[] -> do
 				sync d False
