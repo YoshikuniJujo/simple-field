@@ -6,7 +6,8 @@
 
 module Field.Internal (
 	Field(..), openField, destroyField, closeField,
-	Mask, exposureMask, keyPressMask,
+	Mask, exposureMask,
+		keyPressMask, keyReleaseMask,
 		buttonPressMask, buttonReleaseMask,
 		pointerMotionMask, button1MotionMask,
 	Event', Event(..), withNextEvent, withNextEventTimeout, withNextEventTimeout',
