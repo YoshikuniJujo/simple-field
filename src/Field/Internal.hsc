@@ -10,7 +10,7 @@ module Field.Internal (
 		keyPressMask, keyReleaseMask,
 		buttonPressMask, buttonReleaseMask,
 		pointerMotionMask, button1MotionMask,
-	Event', Event(..), withNextEvent, withNextEventTimeout, withNextEventTimeout',
+	Event', evEvent, evKeySym, Event(..), withNextEvent, withNextEventTimeout, withNextEventTimeout',
 	Position, Dimension, Pixel,
 	Field.Internal.drawLine, fillRect, drawImage,
 	drawStr, Field.Internal.textExtents, textXOff, clearField, flushField,
@@ -96,11 +96,11 @@ closeField Field { display = d } = do
 	setCloseDownMode d #const AllTemporary
 	closeDisplay d
 
-type Event' = (Event, Maybe KeySym)
+data Event' = Event' { evEvent :: Event, evKeySym :: Maybe KeySym } deriving Show
 
 mkEvent' :: Field -> Event -> IO Event'
-mkEvent' f ev = (ev ,) <$> case ev of
-	ev@KeyEvent {} -> Just <$> keycodeToKeysym f (ev_keycode ev) (fromIntegral $ ev_state ev .&. shiftMask)
+mkEvent' f ev = Event' ev <$> case ev of
+	KeyEvent {} -> Just <$> keycodeToKeysym f (ev_keycode ev) (fromIntegral $ ev_state ev .&. shiftMask)
 	_ -> pure Nothing
 
 withNextEvent :: MonadBaseControl IO m => Field -> (Event' -> m a) -> m a

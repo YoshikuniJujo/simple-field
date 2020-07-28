@@ -7,7 +7,7 @@ module Field (
 		keyPressMask, keyReleaseMask,
 		buttonPressMask, buttonReleaseMask,
 		pointerMotionMask, button1MotionMask,
-	Event', Event(..), withNextEvent, withNextEventTimeout, withNextEventTimeout',
+	Event', evEvent, evKeySym, Event(..), withNextEvent, withNextEventTimeout, withNextEventTimeout',
 	Position, Dimension, Pixel, drawLine, drawLines, Point(..), fillRect, drawImage,
 	drawStr, textExtents, textXOff, clearField, flushField,
 	TextUtf8,
