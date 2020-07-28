@@ -1,4 +1,5 @@
 {-# LANGUAGE BlockArguments, LambdaCase, TupleSections #-}
+{-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -Wall -fno-warn-tabs #-}
 
@@ -118,8 +119,8 @@ withNextEventTimeout Field { display = d } n act =
 				(if to then pure [] else allEvent d)
 			_ -> pure es) >>= restoreM
 
-withNextEventTimeout' :: MonadBaseControl IO m => Field -> Word32 -> (Maybe Event' -> m a) -> m a
-withNextEventTimeout' f@Field { display = d, pendingEvents = pes } n act =
+withNextEventTimeout' :: MonadBaseControl IO m => Field -> DiffTime -> (Maybe Event' -> m a) -> m a
+withNextEventTimeout' f@Field { display = d, pendingEvents = pes } (round . (* 1000000) -> n) act =
 	liftBaseWith (\run -> run . act =<< maybe (pure Nothing) ((Just <$>) . mkEvent' f) =<< do
 		readIORef pes >>= \case
 			[] -> do
@@ -127,7 +128,7 @@ withNextEventTimeout' f@Field { display = d, pendingEvents = pes } n act =
 				ea <- allEvent d
 				case ea of
 					[] -> do
-						to <- myWaitForEvent d $ fromIntegral n / 1000000
+						to <- myWaitForEvent d $ fromIntegral (n :: Word32) / 1000000
 						if to then pure Nothing else do
 							e : es <- allEvent d
 							Just e <$ writeIORef pes es
